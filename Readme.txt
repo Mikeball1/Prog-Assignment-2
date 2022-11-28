@@ -1,0 +1,2 @@
+Banking program allows for bank account selection, bank account information display, and widthdraw and deposit method
+Has 5 accounts hard coded into it, inputting an account number not within 1-5 will not work

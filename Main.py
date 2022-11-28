@@ -1,108 +1,101 @@
-class program:
-  def showMainMenu():
-    choice=input("Which option would you like to choose:\n1.Open Account\n2.Select Account\n3.Exit\n")
-    return choice
-  def showAccountMenu():
-     choice2=input("Which option would you like to choose:\n1.Check Balance\n2.Deposit\n3.Withdraw\n4.Exit Account\n")
-     return choice2
-
-class accounts(program):
-  def __init__(self,savingsbal,name,accnum,chequingbal):
-   self.savingsbal=savingsbal
-   self.name=name
-   self.accnum=accnum
-   self.chequingbal=chequingbal
-  def getAccountNumber():
-   accNumber=input("What is your account number?\n")
+from Bank_Account import *
+from Menus import *
+from Bank import *
+from Input_Tests import *
+#Present the intial welcome to the end user
+def run():
+ print("Welcome To Supreme Bank\nPress Any Key To Continue")
+ input("")
+run()
+#Used for widthdraw and deposit amount
+class accounts(bank):
+#Requests account number
+  def searchaccount():
+   accNumber=notfloat("What is your account number?\n")
    return accNumber
-  def getAccountHolderName(self):
-   accHolderName=input("What is your Name\n")
-  # def getRateOfInterest():
-  # =input("")
-  def getCurrentBalance(self):
-   bal=input("")
-  #  deposit=input("")
-  #  withdraw=input("")
+  #Requests users deposit amount and adds to current account balance depending on the account chosen
   def deposit(accbal):
-    accbal+=int(input("How much would you like to deposit\n"))
-    print("Youre new balance is", accbal)
+    accbal+=rightinput("How much would you like to deposit\n")
+    print("Youre new balance deposit balance is", accbal)
     return accbal
+  #Requests users widtdraw amount and subtracts to current account balance depending on the account chosen
   def widthdraw(accbal):
-    widthdrawamount=int(input("How much would you like to widthdraw\n"))
-    while accbal-widthdrawamount<=5000:
-     print("Your savings account requires a minimum balance of $5000\nIf you would like to cancel the widthdraw, type 'exit', otherwise,please try again")
-     widthdrawamount=(input("How much would you like to widthdraw\n"))
-     if widthdrawamount=='exit':
-      break
-     else:
-      widthdrawamount=int(widthdrawamount)
+   if acchoice=='1':
+    widthdrawamount=(rightinput("How much would you like to widthdraw\n"))
+#Ensures savings balance is never less than $5000
+    while int(accbal)-widthdrawamount<=5000:
+     print("Your savings account requires a minimum balance of $5000\nIf you would like to cancel the widthdraw, type '0', otherwise,please try again")
+     widthdrawamount=(rightinput("How much would you like to widthdraw\n"))
     else:
      accbal-=widthdrawamount
-    print("Your balance is", accbal)
-    return accbal
-    
+     print("Your savings balance is $", accbal)
+     return int(accbal)
+#Ensures widthraw amount is no more than $5000 over chequing balance
+   if acchoice=="2":
+    widthdrawamount=rightinput("How much would you like to widthdraw\n")
+    while widthdrawamount>accbal+5000:
+      widthdrawamount= rightinput("You may widthdraw up to $5000 over your current chequing balance\nIf you would like to cancel the widthdraw, type '0', otherwise,please try again\n")
+    else:
+     accbal-=widthdrawamount
+    print("Your chequing balance is $", accbal)
+    return int(accbal)
 
+#Runs the program until users decides to exit
+while True:
+ match program.showMainMenu():
 
-# class showAccountMenu:
-#     def checkbal():
-#     def deposit():
-#     def withdraw():
-#     def exitacc():
+  case '1':
+    print("Open account still under construction, please try again later")
+  case '2':
+  #Assigns bank account info based on user input
+   bankacc= int((accounts.searchaccount()))
+  #Checks to see if bank account exists, if account does not exist, it requests reinput
+   while bankacc>len(banklist)-1:
+    print("This account does not exist within our system please try again")
+    bankacc= int((accounts.searchaccount()))
+   accdetails=banklist[bankacc]
+   m=accounts(accdetails[0],accdetails[1],accdetails[2],accdetails[3])
+   while True:
+    #Requests users input on what they would like to do with their account
+    match program.showAccountMenu():
+     case '1':
+      #Displays account information
+       print("Your chequing balance is:",m.savingsbal,"\nYour savings balance is:" ,m.chequingbal,"\nYour total balance is:",m.savingsbal+m.chequingbal)
+     case '2':
+      #Allows user to deposit depending on which account they would like to use
+      acchoice=input("Would you like to deposit to your savings account or your chequings accounts?\nType 1 for savings and 2 for chequing\n")
+      #Checks if user has input one of the options, if not, sends request again
+      while acchoice!= '1' and acchoice!='2':
+        print("Please input one of the given options")
+        acchoice=input("Would you like to deposit to your savings account or your chequings accounts?\nType 1 for savings and 2 for chequing\n")
+      if acchoice=='1':
+         m.savingsbal=accounts.deposit(m.savingsbal)
+      if acchoice=='2':
+         m.chequingbal=accounts.deposit(m.chequingbal)
 
+     case'3':
+      #Allows user to widthdraw depending on which account they would like to use
+      acchoice=input("Would you like to widthdraw your savings account or your chequings accounts?\nType 1 for savings and 2 for chequing\n")
+      #Checks if user has input one of the options, if not, sends request again
+      while acchoice!= '1' and acchoice!='2':
+       print("Please input one of the given options")
+       acchoice=input("Would you like to widthdraw your savings account or your chequings accounts?\nType 1 for savings and 2 for chequing\n")
+      if acchoice=='1':
+         m.savingsbal=accounts.widthdraw(m.savingsbal)
+      if acchoice=='2':
+         m.chequingbal=accounts.widthdraw(m.chequingbal)
 
+     case '4':
+      #Sets all the change to the accounts permanantly until the program is exited, this means user can enter mulitiple accounts, 
+      #change information and once they return the information will remain changed for the duration of the program
+      accdetails=list(accdetails)
+      accdetails[0]=m.savingsbal
+      accdetails[3]=m.chequingbal
+      accdetails=tuple(accdetails)
+      banklist[bankacc]=(accdetails[0],accdetails[1],accdetails[2],accdetails[3])
 
-match program.showMainMenu():
- case '1':
-    input('')
- case '2':
-   accdetails= accounts.getAccountNumber()
-   match accdetails:
-    case '1':
-     x=accounts(10000,'Jordan',1,10000)
-    case '2':
-     y=accounts(20000,'Sylvester',3,15000)
-    case '3':
-     z=accounts(30000,'Mark',3,20000)
-   match program.showAccountMenu():
-    case '1':
-      if accdetails=='1':
-       print("Ypur chequing balance is:",x.chequingbal,"\nYour savings balance is:" ,x.savingsbal)
-      if accdetails=='2':
-       print("Ypur chequing balance is:",y.chequingbal,"\nYour savings balance is:" ,y.savingsbal)
-      if accdetails=='3':
-       print("Ypur chequing balance is:",z.chequingbal,"\nYour savings balance is:" ,z.savingsbal)
-    case '2':
-      if accdetails=='1':
-       x.savingsbal=accounts.deposit(x.savingsbal)
-      if accdetails=='2':
-       y.savingsbal=accounts.deposit(y.savingsbal)
-      if accdetails=='3':
-       z.savingsbal=accounts.deposit(z.savingsbal)
-    case'3':
-     if accdetails=='1':
-       x.savingsbal=accounts.widthdraw(x.savingsbal)
-     if accdetails=='2':
-       y.savingsbal=accounts.widthdraw(y.savingsbal)
-     if accdetails=='3':
-       z.savingsbal=accounts.widthdraw(z.savingsbal)   
- case '3':
-    exit()
+      break
+#Exits program
+  case '3':
+   exit()
 
-  
-
-
-
-
-# class showMainMenu:
-
-
-# #   def __init__(self,OpenAcc,SelectAcc,Exit):
-# #     self.openacc=OpenAcc
-# #     self.selectacc=SelectAcc
-# #     self.exit=Exit
-# class showAccountMenu:
-# #  def __init__(self,CheckBal,deposit,withdraw,exitacc):
-# #     self.checkbal=CheckBal
-# #     self.deposit=deposit
-# #     self.withdraw=withdraw
-# #     self.exitacc=exitacc
